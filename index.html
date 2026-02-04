@@ -6,25 +6,32 @@
     <title>Birthday Gift</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
+        /* 1. BACKGROUND SECTION */
         body { 
             margin: 0; 
-            /* FIXED: Now using your specific uploaded background file */
+            padding: 0;
             background: #000 url('wp10742485.png') no-repeat center center fixed; 
             background-size: cover;
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden; 
+            font-family: 'Courier New', Courier, monospace;
         }
 
+        /* 2. POKEBALL ANIMATIONS */
         @keyframes shake {
-            0% { transform: rotate(0); }
-            10% { transform: rotate(-8deg); }
-            20% { transform: rotate(8deg); }
-            30% { transform: rotate(-8deg); }
-            40% { transform: rotate(8deg); }
-            50% { transform: rotate(0); }
+            0% { transform: rotate(0deg); }
+            20% { transform: rotate(-10deg); }
+            40% { transform: rotate(10deg); }
+            60% { transform: rotate(-10deg); }
+            80% { transform: rotate(10deg); }
+            100% { transform: rotate(0deg); }
         }
 
-        #pokeball-container { cursor: pointer; text-align: center; z-index: 10; }
+        /* 3. POKEBALL LOOK */
+        #pokeball-container { cursor: pointer; text-align: center; z-index: 100; position: relative; }
         
         .pokeball { 
             width: 150px; height: 150px; background: white; 
@@ -53,5 +60,66 @@
             background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px;
         }
 
-        #scene { display: none; perspective: 1000px; width: 300px; height: 420px; }
-        .card { width: 10
+        /* 4. CARD SECTION */
+        #scene { display: none; perspective: 1000px; width: 300px; height: 420px; z-index: 200; }
+        .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+        
+        .card-front { 
+            background: #333 url('1000016923.jpg') no-repeat center center; 
+            background-size: cover; border: 8px solid #ffcb05; 
+        }
+
+        .card-back { 
+            background: #fffbe6; transform: rotateY(180deg); 
+            display: flex; flex-direction: column; padding: 25px; 
+            justify-content: center; text-align: center; border: 8px solid #3c5aa6; box-sizing: border-box;
+        }
+
+        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 1000; transition: opacity 0.2s; }
+    </style>
+</head>
+<body>
+    <div id="flash"></div>
+
+    <div id="pokeball-container" onclick="openGift()">
+        <div class="pokeball"></div>
+        <div class="tap-text">A WILD GIFT APPEARED!<br>[CLICK TO OPEN]</div>
+    </div>
+
+    <div id="scene">
+        <div class="card" id="card" onclick="flipCard()">
+            <div class="card-front"></div>
+            <div class="card-back">
+                <h2 style="color: #3c5aa6; margin: 0;">LEVEL UP!</h2>
+                <p><b>Happy Birthday!</b></p>
+                <p>I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
+                <div style="color: #ff1c1c; font-weight: bold; border: 3px solid #333; padding: 10px; background: white; margin-top: 10px;">
+                    ✨ ITEM DISCOVERED! ✨<br>
+                    <span style="font-size: 0.8rem; color: #333;">Check the Pokébag! 🎁</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openGift() {
+            try {
+                var audio = new Audio('https://www.myinstants.com/media/sounds/level-up-pokemon.mp3');
+                audio.play();
+            } catch (e) { console.log("Audio skipped"); }
+
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+            document.getElementById('flash').style.opacity = '1';
+            
+            setTimeout(() => {
+                document.getElementById('pokeball-container').style.display = 'none';
+                document.getElementById('scene').style.display = 'block';
+                document.getElementById('flash').style.opacity = '0';
+            }, 300);
+        }
+        function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
+    </script>
+</body>
+</html>
