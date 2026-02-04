@@ -6,77 +6,65 @@
     <title>Birthday Gift</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        /* 1. BACKGROUND SECTION */
         body { 
-            margin: 0; 
-            padding: 0;
-            background: #000 url('wp10742485.png') no-repeat center center fixed; 
-            background-size: cover;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden; 
-            font-family: 'Courier New', Courier, monospace;
+            margin: 0; background: #000 url('wp10742485.png') no-repeat center center fixed; 
+            background-size: cover; display: flex; justify-content: center; align-items: center; 
+            height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace;
         }
 
-        /* 2. POKEBALL ANIMATIONS */
+        /* Pokeball Shake */
         @keyframes shake {
-            0% { transform: rotate(0deg); }
-            20% { transform: rotate(-10deg); }
-            40% { transform: rotate(10deg); }
-            60% { transform: rotate(-10deg); }
-            80% { transform: rotate(10deg); }
-            100% { transform: rotate(0deg); }
+            0% { transform: rotate(0); }
+            20% { transform: rotate(-8deg); }
+            40% { transform: rotate(8deg); }
+            100% { transform: rotate(0); }
         }
 
-        /* 3. POKEBALL LOOK */
-        #pokeball-container { cursor: pointer; text-align: center; z-index: 100; position: relative; }
-        
+        /* Letter Drop Animation */
+        @keyframes letterDrop {
+            0% { transform: translateY(-600px); opacity: 0; }
+            70% { transform: translateY(30px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        #pokeball-container { cursor: pointer; text-align: center; z-index: 10; }
         .pokeball { 
-            width: 150px; height: 150px; background: white; 
-            border: 10px solid #333; border-radius: 50%; 
-            position: relative; overflow: hidden; margin: 0 auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            animation: shake 1.5s infinite ease-in-out;
+            width: 150px; height: 150px; background: white; border: 10px solid #333; 
+            border-radius: 50%; position: relative; overflow: hidden; margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: shake 1.5s infinite;
         }
+        .pokeball::before { content: ''; position: absolute; top: 0; left: 0; background: #ff1c1c; width: 100%; height: 50%; border-bottom: 10px solid #333; }
+        .pokeball::after { content: ''; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; background: white; border: 8px solid #333; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
 
-        .pokeball::before { 
-            content: ''; position: absolute; top: 0; left: 0;
-            background: #ff1c1c; width: 100%; height: 50%; 
-            border-bottom: 10px solid #333; 
-        }
-
-        .pokeball::after { 
-            content: ''; position: absolute; top: 50%; left: 50%; 
-            width: 30px; height: 30px; background: white; 
-            border: 8px solid #333; border-radius: 50%; 
-            transform: translate(-50%, -50%); z-index: 10; 
-        }
-
-        .tap-text { 
-            color: #ffcb05; font-weight: bold; font-size: 1.2rem; 
-            text-shadow: 2px 2px #000; margin-top: 20px; 
-            background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px;
-        }
-
-        /* 4. CARD SECTION */
-        #scene { display: none; perspective: 1000px; width: 300px; height: 420px; z-index: 200; }
+        /* 3D Card Setup */
+        #scene { display: none; perspective: 1000px; width: 280px; height: 390px; z-index: 5; }
         .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 6px solid #ffcb05; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background-size: cover; background-position: center; }
         
-        .card-front { 
-            background: #333 url('1000016923.jpg') no-repeat center center; 
-            background-size: cover; border: 8px solid #ffcb05; 
+        /* The order you wanted: Message on back, Psyduck on front */
+        .card-front { background-image: url('backofcard.png'); border-color: #3c5aa6; }
+        .card-back { background-image: url('1000016923.jpg'); transform: rotateY(180deg); }
+
+        /* Dropping Letter Icon */
+        #letter-icon {
+            display: none; position: absolute; top: 20px; right: 20px;
+            width: 80px; cursor: pointer; z-index: 100;
+            animation: letterDrop 1.2s ease-out forwards;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
         }
 
-        .card-back { 
-            background: #fffbe6; transform: rotateY(180deg); 
-            display: flex; flex-direction: column; padding: 25px; 
-            justify-content: center; text-align: center; border: 8px solid #3c5aa6; box-sizing: border-box;
+        /* Letter Modal Overlay */
+        #letter-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 200; justify-content: center; align-items: center;
+        }
+        .letter-paper {
+            background: #fffbe6; padding: 30px; width: 80%; max-width: 400px;
+            border: 6px solid #3c5aa6; border-radius: 10px; text-align: center;
         }
 
+        .tap-text { color: #ffcb05; font-weight: bold; font-size: 1.1rem; text-shadow: 2px 2px #000; margin-top: 20px; }
         #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 1000; transition: opacity 0.2s; }
     </style>
 </head>
@@ -91,26 +79,27 @@
     <div id="scene">
         <div class="card" id="card" onclick="flipCard()">
             <div class="card-front"></div>
-            <div class="card-back">
-                <h2 style="color: #3c5aa6; margin: 0;">LEVEL UP!</h2>
-                <p><b>Happy Birthday!</b></p>
-                <p>I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
-                <div style="color: #ff1c1c; font-weight: bold; border: 3px solid #333; padding: 10px; background: white; margin-top: 10px;">
-                    ✨ ITEM DISCOVERED! ✨<br>
-                    <span style="font-size: 0.8rem; color: #333;">Check the Pokébag! 🎁</span>
-                </div>
-            </div>
+            <div class="card-back"></div>
+        </div>
+    </div>
+
+    <img id="letter-icon" src="https://cdn-icons-png.flaticon.com/512/535/535234.png" alt="Letter" onclick="showLetter()">
+
+    <div id="letter-overlay" onclick="closeLetter()">
+        <div class="letter-paper">
+            <h2 style="color: #3c5aa6;">ITEM DISCOVERED!</h2>
+            <p>I hope you liked the card! Now it's time for the real thing.</p>
+            <p><b>Check the Pokébag for your surprise! 🎁</b></p>
+            <p style="font-size: 0.8rem; color: #ff1c1c;">(Click anywhere to close)</p>
         </div>
     </div>
 
     <script>
-        function openGift() {
-            try {
-                var audio = new Audio('12_3.mp3');
-                audio.play();
-            } catch (e) { console.log("Audio skipped"); }
+        const birthdaySound = new Audio('12_3.mp3');
 
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+        function openGift() {
+            birthdaySound.play().catch(e => console.log("Sound check"));
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             document.getElementById('flash').style.opacity = '1';
             
             setTimeout(() => {
@@ -119,7 +108,22 @@
                 document.getElementById('flash').style.opacity = '0';
             }, 300);
         }
-        function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
+
+        function flipCard() {
+            const card = document.getElementById('card');
+            if (!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                confetti({ particleCount: 50, spread: 50, origin: { y: 0.8 } });
+                
+                // DROP THE LETTER after she flips the card
+                setTimeout(() => {
+                    document.getElementById('letter-icon').style.display = 'block';
+                }, 1500);
+            }
+        }
+
+        function showLetter() { document.getElementById('letter-overlay').style.display = 'flex'; }
+        function closeLetter() { document.getElementById('letter-overlay').style.display = 'none'; }
     </script>
 </body>
 </html>
