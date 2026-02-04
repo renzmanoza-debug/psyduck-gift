@@ -4,51 +4,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        body { margin: 0; background: url('https://i.pinimg.com/originals/e5/22/02/e52202674e790400032e562858597034.gif'); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
-        #pokeball-container { cursor: pointer; z-index: 10; text-align: center; animation: float 3s ease-in-out infinite; }
-        .pokeball { width: 140px; height: 140px; background: white; border: 8px solid #333; border-radius: 50%; position: relative; overflow: hidden; margin: 0 auto; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        body { 
+            margin: 0; 
+            background: url('https://i.pinimg.com/originals/e5/22/02/e52202674e790400032e562858597034.gif'); 
+            background-size: cover;
+            background-position: center;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* The Shaking Animation */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0); }
+            20% { transform: translate(-10px, 0) rotate(-10deg); }
+            40% { transform: translate(10px, 0) rotate(10deg); }
+            60% { transform: translate(-10px, 0) rotate(-10deg); }
+            80% { transform: translate(10px, 0) rotate(10deg); }
+            100% { transform: translate(0, 0) rotate(0); }
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        #pokeball-container { 
+            cursor: pointer; 
+            z-index: 10; 
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .pokeball { 
+            width: 140px; height: 140px; 
+            background: white; border: 8px solid #333; 
+            border-radius: 50%; position: relative; 
+            overflow: hidden; margin: 0 auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            animation: shake 1.5s infinite; /* This makes it shake! */
+        }
+
         .pokeball::before { content: ''; position: absolute; background: #ff1c1c; width: 100%; height: 50%; border-bottom: 8px solid #333; }
         .pokeball::after { content: ''; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; background: white; border: 8px solid #333; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
-        .tap-text { color: #ffcb05; font-weight: bold; font-size: 1.1rem; text-shadow: 2px 2px #3c5aa6; margin-top: 15px; }
+
+        .tap-text {
+            color: #ffcb05;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 2px 2px #3c5aa6;
+            margin-top: 15px;
+        }
+
         #scene { display: none; perspective: 1000px; width: 300px; height: 420px; animation: float 3s ease-in-out infinite; }
         .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        /* MATCH THIS NAME TO YOUR IMAGE FILE */
-        .card-front { background-image: url('birthday.jpg'); background-size: cover; background-position: center; border: 6px solid #ffcb05; }
-        .card-back { background: #fffbe6; transform: rotateY(180deg); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; justify-content: center; text-align: center; border: 6px solid #3c5aa6; }
+        
+        /* Fixed Image Name */
+        .card-front { 
+            background-image: url('1000016923.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            border: 6px solid #ffcb05; 
+        }
+
+        .card-back { 
+            background: #fffbe6; 
+            transform: rotateY(180deg); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            justify-content: center; 
+            text-align: center; 
+            border: 6px solid #3c5aa6; 
+        }
+
         h2 { color: #3c5aa6; margin: 0; font-size: 1.4rem; text-transform: uppercase; }
         p { color: #333; font-size: 0.9rem; line-height: 1.4; margin: 10px 0; }
         #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 100; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
     </style>
 </head>
 <body>
     <div id="flash"></div>
+
     <div id="pokeball-container" onclick="openGift()">
         <div class="pokeball"></div>
         <div class="tap-text">A WILD GIFT APPEARED! <br> [TAP TO OPEN]</div>
     </div>
+
     <div id="scene">
         <div class="card" id="card" onclick="flipCard()">
             <div class="card-front"></div>
             <div class="card-back">
                 <h2>LEVEL UP!</h2>
                 <p><b>Happy Birthday!</b></p>
-                <p>I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
-                <div style="color: #ff1c1c; font-weight: bold; animation: pulse 1.5s infinite; border: 2px solid #333; padding: 5px;">
+                <p>I'm so sorry if this is the only gift I have for you—I know it's not a Rare Candy or a Master Ball.</p>
+                <p>But thank you for being in my party. I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
+                <div style="color: #ff1c1c; font-weight: bold; border: 2px solid #333; padding: 5px;">
                     ✨ ITEM DISCOVERED! ✨<br>
                     <span style="font-size: 0.8rem; color: #333;">Check the Pokébag! 🎁</span>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
         function openGift() {
-            new Audio('https://www.myinstants.com/media/sounds/pokemon-item-found.mp3').play().catch(e => console.log(e));
+            // Sound Fix
+            var audio = new Audio('https://www.myinstants.com/media/sounds/pokemon-item-found.mp3');
+            audio.play();
+
             document.getElementById('flash').style.opacity = '1';
             confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 }, colors: ['#ffcb05', '#3c5aa6', '#ff1c1c'] });
+
             setTimeout(() => {
                 document.getElementById('pokeball-container').style.display = 'none';
                 document.getElementById('scene').style.display = 'block';
