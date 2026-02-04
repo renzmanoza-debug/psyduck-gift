@@ -3,46 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Wild Gift!</title>
+    <title>Birthday Gift</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body { 
             margin: 0; 
-            background: url('https://i.pinimg.com/originals/e5/22/02/e52202674e790400032e562858597034.gif') no-repeat center center fixed; 
+            /* Updated background to a very reliable Pixel Art City link */
+            background: #000 url('https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXpueHh6Znd6amZ3amZ3amZ3amZ3amZ3amZ3amZ3amZ3amZ3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKMGpxxS05G9N0k/giphy.gif') no-repeat center center fixed; 
             background-size: cover;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Shaking Animation */
         @keyframes shake {
-            0% { transform: rotate(0deg); }
-            10% { transform: rotate(-10deg); }
-            20% { transform: rotate(10deg); }
-            30% { transform: rotate(-10deg); }
-            40% { transform: rotate(10deg); }
-            50% { transform: rotate(0deg); }
-            100% { transform: rotate(0deg); }
+            0% { transform: rotate(0); }
+            20% { transform: rotate(-15deg); }
+            40% { transform: rotate(15deg); }
+            60% { transform: rotate(-15deg); }
+            80% { transform: rotate(15deg); }
+            100% { transform: rotate(0); }
         }
 
-        /* Hover/Float Animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-
-        #pokeball-container { 
-            cursor: pointer; 
-            z-index: 10; 
-            text-align: center;
-            animation: float 3s ease-in-out infinite;
-        }
-
+        #pokeball-container { cursor: pointer; text-align: center; z-index: 10; }
+        
+        /* Fixed Pokeball Styling */
         .pokeball { 
-            width: 140px; height: 140px; 
-            background: white; border: 8px solid #333; 
-            border-radius: 50%;
+            width: 150px; height: 150px; background: white; 
+            border: 10px solid #333; border-radius: 50%; 
+            position: relative; overflow: hidden; margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7); 
+            animation: shake 1.5s infinite;
+        }
+
+        /* Red Top Half */
+        .pokeball::before { 
+            content: ''; position: absolute; top: 0; left: 0;
+            background: #ff1c1c; width: 100%; height: 50%; 
+            border-bottom: 10px solid #333; 
+        }
+
+        /* Center Button */
+        .pokeball::after { 
+            content: ''; position: absolute; top: 50%; left: 50%; 
+            width: 35px; height: 35px; background: white; 
+            border: 8px solid #333; border-radius: 50%; 
+            transform: translate(-50%, -50%); z-index: 10; 
+        }
+
+        .tap-text { 
+            color: #ffcb05; font-weight: bold; font-size: 1.2rem; 
+            text-shadow: 3px 3px #000; margin-top: 20px; 
+            background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px;
+        }
+
+        #scene { display: none; perspective: 1000px; width: 300px; height: 420px; }
+        .card { width:
