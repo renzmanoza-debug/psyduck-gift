@@ -27,30 +27,106 @@
 
         #pokeball-container { cursor: pointer; text-align: center; z-index: 10; }
         .pokeball { 
-            width: 150px; height: 150px; background: white; border: 10px solid #333; 
+            width: 160px; height: 160px; background: white; border: 10px solid #333; 
             border-radius: 50%; position: relative; overflow: hidden; margin: 0 auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: shake 1.5s infinite;
         }
         .pokeball::before { content: ''; position: absolute; top: 0; left: 0; background: #ff1c1c; width: 100%; height: 50%; border-bottom: 10px solid #333; }
-        .pokeball::after { content: ''; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; background: white; border: 8px solid #333; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+        .pokeball::after { content: ''; position: absolute; top: 50%; left: 50%; width: 35px; height: 35px; background: white; border: 8px solid #333; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
 
-        #scene { display: none; perspective: 1000px; width: 280px; height: 390px; z-index: 5; }
+        /* INCREASED CARD SIZE: Width from 280px -> 340px | Height from 390px -> 480px */
+        #scene { display: none; perspective: 1200px; width: 340px; height: 480px; z-index: 5; }
         .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
         .card.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 6px solid #ffcb05; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background-size: cover; background-position: center; }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; border: 8px solid #ffcb05; box-shadow: 0 15px 45px rgba(0,0,0,0.9); background-size: cover; background-position: center; }
         
         .card-front { background-image: url('backofcard.png'); border-color: #3c5aa6; }
         .card-back { background-image: url('1000016923.jpg'); transform: rotateY(180deg); }
 
-        /* The Dropping Psyduck Head */
+        /* Larger Psyduck Drop Icon */
         #psyduck-drop-icon {
-            display: none; position: absolute; top: 25px; right: 25px;
-            width: 90px; height: 90px; cursor: pointer; z-index: 100;
+            display: none; position: absolute; top: 30px; right: 30px;
+            width: 110px; height: 110px; cursor: pointer; z-index: 100;
             background: url('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png') no-repeat center center;
             background-size: contain;
             animation: psyduckDrop 1.2s ease-out forwards;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.6));
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.7));
         }
 
         #letter-overlay {
-            display: none; position: fixed; top: 0; left: 0;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92); z-index: 200; justify-content: center; align-items: center;
+        }
+        .letter-paper {
+            background: #fffbe6; padding: 40px; width: 85%; max-width: 450px;
+            border: 8px solid #3c5aa6; border-radius: 15px; text-align: center;
+            box-shadow: 0 0 30px #ffcb05;
+        }
+
+        /* Larger Font for Letter Content */
+        .letter-paper h2 { font-size: 1.8rem; margin-bottom: 20px; }
+        .letter-paper p { font-size: 1.1rem; line-height: 1.6; }
+
+        .tap-text { color: #ffcb05; font-weight: bold; font-size: 1.3rem; text-shadow: 3px 3px #000; margin-top: 25px; }
+        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 1000; transition: opacity 0.2s; }
+    </style>
+</head>
+<body>
+    <div id="flash"></div>
+
+    <div id="pokeball-container" onclick="openGift()">
+        <div class="pokeball"></div>
+        <div class="tap-text">A WILD GIFT APPEARED!<br>[CLICK TO OPEN]</div>
+    </div>
+
+    <div id="scene">
+        <div class="card" id="card" onclick="flipCard()">
+            <div class="card-front"></div>
+            <div class="card-back"></div>
+        </div>
+    </div>
+
+    <div id="psyduck-drop-icon" onclick="showLetter()"></div>
+
+    <div id="letter-overlay" onclick="closeLetter()">
+        <div class="letter-paper">
+            <h2 style="color: #3c5aa6;">ITEM DISCOVERED!</h2>
+            <p>I hope you liked the card!</p>
+            <p>Now it's time for the real thing.</p>
+            <p><b>Check the Pokébag for your surprise! 🎁</b></p>
+            <p style="font-size: 0.9rem; color: #ff1c1c; margin-top: 25px; font-weight: bold;">(Click anywhere to close)</p>
+        </div>
+    </div>
+
+    <script>
+        const birthdaySound = new Audio('12_3.mp3');
+
+        function openGift() {
+            birthdaySound.play().catch(e => console.log("Sound check"));
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+            document.getElementById('flash').style.opacity = '1';
+            
+            setTimeout(() => {
+                document.getElementById('pokeball-container').style.display = 'none';
+                document.getElementById('scene').style.display = 'block';
+                document.getElementById('flash').style.opacity = '0';
+            }, 300);
+        }
+
+        function flipCard() {
+            const card = document.getElementById('card');
+            if (!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+                
+                setTimeout(() => {
+                    document.getElementById('psyduck-drop-icon').style.display = 'block';
+                }, 1500);
+            }
+        }
+
+        function showLetter() { document.getElementById('letter-overlay').style.display = 'flex'; }
+        function closeLetter() { document.getElementById('letter-overlay').style.display = 'none'; }
+    </script>
+</body>
+</html>
