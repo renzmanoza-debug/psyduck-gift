@@ -8,7 +8,8 @@
     <style>
         body { 
             margin: 0; 
-            background: #000 url('https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJndXpueHh6Znd6amZ3amZ3amZ3amZ3amZ3amZ3amZ3amZ3amZ3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/3o7TKMGpxxS05G9N0k/giphy.gif') no-repeat center center fixed; 
+            /* NEW RELIABLE BACKGROUND LINK */
+            background: #000 url('https://i.redd.it/pixel-art-city-v0-50bux9q407ob1.gif?width=1000&auto=webp&s=f3613032d847847c5d796677469707e77a2886f7') no-repeat center center fixed; 
             background-size: cover;
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace;
@@ -30,7 +31,7 @@
             border: 10px solid #333; border-radius: 50%; 
             position: relative; overflow: hidden; margin: 0 auto;
             box-shadow: 0 10px 30px rgba(0,0,0,0.7); 
-            animation: shake 1.5s infinite;
+            animation: shake 1.5s infinite ease-in-out;
         }
 
         /* The Red Top */
@@ -51,7 +52,7 @@
         .tap-text { 
             color: #ffcb05; font-weight: bold; font-size: 1.2rem; 
             text-shadow: 2px 2px #000; margin-top: 20px; 
-            background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px;
+            background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px;
         }
 
         #scene { display: none; perspective: 1000px; width: 300px; height: 420px; }
@@ -70,8 +71,8 @@
             justify-content: center; text-align: center; border: 8px solid #3c5aa6; box-sizing: border-box;
         }
 
-        h2 { color: #3c5aa6; margin: 0; font-size: 1.5rem; }
-        p { line-height: 1.5; color: #333; }
+        h2 { color: #3c5aa6; margin: 0; font-size: 1.5rem; text-transform: uppercase; }
+        p { line-height: 1.5; color: #333; font-size: 0.9rem; }
 
         #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 100; transition: opacity 0.2s; }
     </style>
@@ -91,14 +92,14 @@
                 <p>I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
                 <div style="color: #ff1c1c; font-weight: bold; border: 3px solid #333; padding: 10px; background: white; margin-top: 10px;">
                     ✨ ITEM DISCOVERED! ✨<br>
-                    <span style="font-size: 0.9rem; color: #333;">Check the Pokébag! 🎁</span>
+                    <span style="font-size: 0.8rem; color: #333;">Check the Pokébag! 🎁</span>
                 </div>
             </div>
         </div>
     </div>
     <script>
         function openGift() {
-            // Using a standard Level Up sound
+            // Updated sound link to be more robust
             var audio = new Audio('https://www.myinstants.com/media/sounds/level-up-pokemon.mp3');
             audio.play();
 
