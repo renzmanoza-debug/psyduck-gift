@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Wild Gift Appears!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* --- POKEBALL --- */
+        .pokeball {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(to bottom, #ff0000 50%, #ffffff 50%);
+            border: 8px solid #000;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+        }
+
+        .pokeball::before {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 8px;
+            background: #000;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .pokeball::after {
+            content: "";
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: 8px solid #000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Psyduck Shake Animation */
+        @keyframes shake {
+            0% { transform: translate(2px, 2px) rotate(0deg); }
+            20% { transform: translate(-3px, -2px) rotate(-1deg); }
+            40% { transform: translate(-3px, 1px) rotate(1deg); }
+            60% { transform: translate(3px, 1px) rotate(0deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        .shaking { animation: shake 0.15s infinite; }
+
+        /* --- THE CARD --- */
+        .scene {
+            width: 320px;
+            height: 450px;
+            perspective: 1000px;
+            display: none;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card.is-flipped { transform: rotateY(180deg); }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        .card-front {
+            background-image: url('1000016920.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 6px solid #ffd700;
+        }
+
+        /* Holo Effect */
+        .holo {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(125deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 200%;
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            0% { background-position: 200% 0%; }
+            100% { background-position: -200% 100%; }
+        }
+
+        .card-back {
+            background: #2c3e50;
+            color: white;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            border: 8px solid #3c5aa6;
+        }
+
+        .letter-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            font-style: italic;
+            border: 1px solid #ffd700;
+        }
+
+        .flash {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flash" id="flash"></div>
+
+    <div class="pokeball" id="ball" onclick="revealCard()"></div>
+
+    <div class="scene" id="scene">
+        <div class="card" id="card" onclick="flipCard()">
+            <div class="card-face card-front">
+                <div class="holo"></div>
+            </div>
+            <div class="card-face card-back">
+                <h2>A Message for You!</h2>
+                <div class="letter-box">
+                    <p>"Hi Babi!, Happy 26th Birthday. Sana magustuhan mo tong gift ko sayo, sorry eto lang nakayanan, bawi ako next time. Iloveyouverymuch po baby ko! /p>
+                    <p>- Inging mo hehehe          </div>
+                <p style="font-size: 0.8em; margin-top: 20px; opacity: 0.7;">(Click to flip back)</p>
+            </div>
+        </div>
+    </div>
+
+    <scriYour    function revealCard() {
+            const ball = document.getElementById('ball');
+            const flash = document.getElementById('flash');
+            const scene = document.getElementById('scene');
+
+            ball.classList.add('shaking');
+
+            setTimeout(() => {
+                flash.style.opacity = '1';
+                
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff0000', '#ffffff', '#ffd700', '#3c5aa6']
+                });
+
+                setTimeout(() => {
+                    ball.style.display = 'none';
+                    scene.style.display = 'block';
+                    flash.style.opacity = '0';
+                }, 200);
+            }, 1200);
+        }
+
+        function flipCard() {
+            document.getElementById('card').classList.toggle('is-flipped');
+        }
+    </script>
+</body>
+</html>
