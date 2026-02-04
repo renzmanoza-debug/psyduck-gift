@@ -1,330 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wild Psyduck Gift</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Gift</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            /* Using a high-uptime Pixel Art Host */
+            background: #0a0a0a url('https://i.ibb.co/L6M9Y9Y/pixel-city.gif') no-repeat center center fixed; 
+            background-size: cover;
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        @keyframes shake {
+            0% { transform: rotate(0); }
+            10% { transform: rotate(-8deg); }
+            20% { transform: rotate(8deg); }
+            30% { transform: rotate(-8deg); }
+            40% { transform: rotate(8deg); }
+            50% { transform: rotate(0); }
+        }
 
-<style>
-* {
-  box-sizing: border-box;
-  font-family: "Courier New", monospace;
-}
+        #pokeball-container { cursor: pointer; text-align: center; z-index: 10; }
+        
+        .pokeball { 
+            width: 150px; height: 150px; background: white; 
+            border: 10px solid #333; border-radius: 50%; 
+            position: relative; overflow: hidden; margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+            animation: shake 1.5s infinite ease-in-out;
+        }
 
-body {
-  margin: 0;
-  height: 100vh;
-  overflow: hidden;
-  background:
-    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
-    url("https://media.giphy.com/media/3o7aD2saalBwwftBIY/giphy.gif");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  image-rendering: pixelated;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        .pokeball::before { 
+            content: ''; position: absolute; top: 0; left: 0;
+            background: #ff1c1c; width: 100%; height: 50%; 
+            border-bottom: 10px solid #333; 
+        }
 
-/* ================= NPCs ================= */
-.npc-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
+        .pokeball::after { 
+            content: ''; position: absolute; top: 50%; left: 50%; 
+            width: 30px; height: 30px; background: white; 
+            border: 8px solid #333; border-radius: 50%; 
+            transform: translate(-50%, -50%); z-index: 10; 
+        }
 
-.npc {
-  position: absolute;
-  bottom: 12%;
-  width: 24px;
-  height: 40px;
-  image-rendering: pixelated;
-  animation: walk linear infinite;
-}
+        .tap-text { 
+            color: #ffcb05; font-weight: bold; font-size: 1.2rem; 
+            text-shadow: 2px 2px #000; margin-top: 20px; 
+            background: rgba(0,0,0,0.7); padding: 10px; border-radius: 8px;
+        }
 
-/* NPC sprites using pure CSS */
-.npc::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(#000 0 0),
-    linear-gradient(#ffd966 0 0),
-    linear-gradient(#4a86e8 0 0),
-    linear-gradient(#000 0 0);
-  background-size:
-    24px 4px,
-    16px 10px,
-    20px 16px,
-    16px 6px;
-  background-position:
-    center top,
-    center 4px,
-    center 14px,
-    center bottom;
-  background-repeat: no-repeat;
-}
+        #scene { display: none; perspective: 1000px; width: 300px; height: 420px; }
+        .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+        
+        .card-front { 
+            background: #333 url('1000016923.jpg') no-repeat center center; 
+            background-size: cover; border: 8px solid #ffcb05; 
+        }
 
-/* Variations */
-.npc.red::before { filter: hue-rotate(0deg); }
-.npc.blue::before { filter: hue-rotate(200deg); }
-.npc.green::before { filter: hue-rotate(100deg); }
+        .card-back { 
+            background: #fffbe6; transform: rotateY(180deg); 
+            display: flex; flex-direction: column; padding: 25px; 
+            justify-content: center; text-align: center; border: 8px solid #3c5aa6; box-sizing: border-box;
+        }
 
-.npc.one { animation-duration: 18s; bottom: 14%; }
-.npc.two { animation-duration: 22s; bottom: 18%; }
-.npc.three { animation-duration: 26s; bottom: 10%; }
-
-@keyframes walk {
-  from { left: -40px; }
-  to { left: 110%; }
-}
-
-/* ================= Flash ================= */
-.flash {
-  position: fixed;
-  inset: 0;
-  background: white;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s;
-  z-index: 999;
-}
-.flash.active { opacity: 1; }
-
-/* ================= Pokéball ================= */
-.pokeball-container {
-  z-index: 5;
-  text-align: center;
-  animation: float 3s ease-in-out infinite;
-}
-
-.pokeball {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  position: relative;
-  cursor: pointer;
-  animation: shake 1.4s infinite;
-}
-
-.pokeball::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 50%;
-  background: #e53935;
-  border-radius: 90px 90px 0 0;
-}
-
-.pokeball::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 50%;
-  background: white;
-  border-radius: 0 0 90px 90px;
-}
-
-.belt {
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  height: 14px;
-  background: black;
-  transform: translateY(-50%);
-}
-
-.button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 36px;
-  height: 36px;
-  background: white;
-  border: 6px solid black;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.ball-text {
-  margin-top: 18px;
-  color: #fff;
-  font-weight: bold;
-  text-shadow: 2px 2px 0 #000;
-  font-size: 14px;
-}
-
-/* ================= Card ================= */
-.card-wrapper {
-  display: none;
-  perspective: 1200px;
-  animation: float 3s ease-in-out infinite;
-  z-index: 5;
-}
-
-.card {
-  width: 300px;
-  height: 420px;
-  transform-style: preserve-3d;
-  transition: transform 0.8s;
-  cursor: pointer;
-}
-
-.card.flipped { transform: rotateY(180deg); }
-
-.card-side {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-}
-
-.card-front img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.card-back {
-  background: #fff2cc;
-  border: 6px solid #2b6cb0;
-  padding: 16px;
-  transform: rotateY(180deg);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.item-box {
-  border: 3px dashed #2b6cb0;
-  background: #e6f0ff;
-  padding: 10px;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* ================= Animations ================= */
-@keyframes shake {
-  0%,100% { transform: rotate(0); }
-  25% { transform: rotate(-6deg); }
-  75% { transform: rotate(6deg); }
-}
-
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* ================= Mobile ================= */
-@media (max-width: 500px) {
-  .card { width: 260px; height: 380px; }
-  .npc { transform: scale(0.8); }
-}
-</style>
+        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 100; transition: opacity 0.2s; }
+    </style>
 </head>
-
 <body>
+    <div id="flash"></div>
 
-<!-- NPCs -->
-<div class="npc-layer">
-  <div class="npc red one"></div>
-  <div class="npc blue two"></div>
-  <div class="npc green three"></div>
-</div>
+    <audio id="levelUpSound" preload="auto">
+        <source src="https://www.myinstants.com/media/sounds/level-up-pokemon.mp3" type="audio/mpeg">
+    </audio>
 
-<div class="flash" id="flash"></div>
-
-<div class="pokeball-container" id="pokeballContainer">
-  <div class="pokeball" id="pokeball">
-    <div class="belt"></div>
-    <div class="button"></div>
-  </div>
-  <div class="ball-text">
-    A WILD GIFT APPEARED!<br>[CLICK TO OPEN]
-  </div>
-</div>
-
-<div class="card-wrapper" id="cardWrapper">
-  <div class="card" id="card">
-    <div class="card-side card-front">
-      <img src="1000016923.jpg">
+    <div id="pokeball-container" onclick="openGift()">
+        <div class="pokeball"></div>
+        <div class="tap-text">A WILD GIFT APPEARED!<br>[CLICK TO OPEN]</div>
     </div>
-    <div class="card-side card-back">
-      <div>
-        <h2>LEVEL UP!</h2>
-        <p>
-          Thank you for being in my party through every battle,
-          grind, and random encounter. 💙<br><br>
-          Sorry this gift isn’t a Master Ball or Rare Candy—
-          but it comes with all my heart.<br><br>
-          I love you more than Snorlax loves naps.
-        </p>
-      </div>
-      <div class="item-box">
-        ITEM DISCOVERED!<br>
-        A real surprise is hidden inside a Pokébag 👀
-      </div>
+
+    <div id="scene">
+        <div class="card" id="card" onclick="flipCard()">
+            <div class="card-front"></div>
+            <div class="card-back">
+                <h2 style="color: #3c5aa6; margin: 0;">LEVEL UP!</h2>
+                <p><b>Happy Birthday!</b></p>
+                <p>I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
+                <div style="color: #ff1c1c; font-weight: bold; border: 3px solid #333; padding: 10px; background: white; margin-top: 10px;">
+                    ✨ ITEM DISCOVERED! ✨<br>
+                    <span style="font-size: 0.9rem; color: #333;">Check the Pokébag! 🎁</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<audio id="bgm" loop>
-  <source src="https://files.catbox.moe/9xg7n4.mp3">
-</audio>
+    <script>
+        function openGift() {
+            // Sound play
+            var sound = document.getElementById('levelUpSound');
+            sound.play().catch(e => console.log("Sound blocked by browser. Click page first!"));
 
-<audio id="openSound">
-  <source src="https://vgmsite.com/soundtracks/pokemon-gameboy-sound-collection/ypjptuub/113-item-get.mp3">
-</audio>
-
-<audio id="flipSound">
-  <source src="https://files.catbox.moe/2gkq5b.mp3">
-</audio>
-
-<script>
-const pokeball = document.getElementById("pokeball");
-const container = document.getElementById("pokeballContainer");
-const cardWrapper = document.getElementById("cardWrapper");
-const card = document.getElementById("card");
-const flash = document.getElementById("flash");
-const bgm = document.getElementById("bgm");
-const openSound = document.getElementById("openSound");
-const flipSound = document.getElementById("flipSound");
-
-let started = false;
-
-pokeball.onclick = () => {
-  if (!started) {
-    bgm.volume = 0.4;
-    bgm.play();
-    started = true;
-  }
-
-  openSound.play();
-  flash.classList.add("active");
-  setTimeout(() => flash.classList.remove("active"), 350);
-
-  confetti({ particleCount: 160, spread: 90, origin: { y: 0.6 } });
-
-  setTimeout(() => {
-    container.style.display = "none";
-    cardWrapper.style.display = "block";
-  }, 500);
-};
-
-card.onclick = () => {
-  flipSound.currentTime = 0;
-  flipSound.play();
-  card.classList.toggle("flipped");
-};
-</script>
-
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+            document.getElementById('flash').style.opacity = '1';
+            
+            setTimeout(() => {
+                document.getElementById('pokeball-container').style.display = 'none';
+                document.getElementById('scene').style.display = 'block';
+                document.getElementById('flash').style.opacity = '0';
+            }, 300);
+        }
+        function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
+    </script>
 </body>
 </html>
