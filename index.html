@@ -8,8 +8,8 @@
     <style>
         body { 
             margin: 0; 
-            /* Using a high-uptime Pixel Art Host */
-            background: #0a0a0a url('https://i.ibb.co/L6M9Y9Y/pixel-city.gif') no-repeat center center fixed; 
+            /* FIXED: Now using your specific uploaded background file */
+            background: #000 url('wp10742485.png') no-repeat center center fixed; 
             background-size: cover;
             display: flex; justify-content: center; align-items: center; 
             height: 100vh; overflow: hidden; font-family: 'Courier New', Courier, monospace;
@@ -54,67 +54,4 @@
         }
 
         #scene { display: none; perspective: 1000px; width: 300px; height: 420px; }
-        .card { width: 100%; height: 100%; position: relative; transition: transform 0.8s; transform-style: preserve-3d; cursor: pointer; }
-        .card.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
-        
-        .card-front { 
-            background: #333 url('1000016923.jpg') no-repeat center center; 
-            background-size: cover; border: 8px solid #ffcb05; 
-        }
-
-        .card-back { 
-            background: #fffbe6; transform: rotateY(180deg); 
-            display: flex; flex-direction: column; padding: 25px; 
-            justify-content: center; text-align: center; border: 8px solid #3c5aa6; box-sizing: border-box;
-        }
-
-        #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; opacity: 0; pointer-events: none; z-index: 100; transition: opacity 0.2s; }
-    </style>
-</head>
-<body>
-    <div id="flash"></div>
-
-    <audio id="levelUpSound" preload="auto">
-        <source src="https://www.myinstants.com/media/sounds/level-up-pokemon.mp3" type="audio/mpeg">
-    </audio>
-
-    <div id="pokeball-container" onclick="openGift()">
-        <div class="pokeball"></div>
-        <div class="tap-text">A WILD GIFT APPEARED!<br>[CLICK TO OPEN]</div>
-    </div>
-
-    <div id="scene">
-        <div class="card" id="card" onclick="flipCard()">
-            <div class="card-front"></div>
-            <div class="card-back">
-                <h2 style="color: #3c5aa6; margin: 0;">LEVEL UP!</h2>
-                <p><b>Happy Birthday!</b></p>
-                <p>I'm so lucky I caught you! I love you more than a Snorlax loves naps.</p>
-                <div style="color: #ff1c1c; font-weight: bold; border: 3px solid #333; padding: 10px; background: white; margin-top: 10px;">
-                    ✨ ITEM DISCOVERED! ✨<br>
-                    <span style="font-size: 0.9rem; color: #333;">Check the Pokébag! 🎁</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function openGift() {
-            // Sound play
-            var sound = document.getElementById('levelUpSound');
-            sound.play().catch(e => console.log("Sound blocked by browser. Click page first!"));
-
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-            document.getElementById('flash').style.opacity = '1';
-            
-            setTimeout(() => {
-                document.getElementById('pokeball-container').style.display = 'none';
-                document.getElementById('scene').style.display = 'block';
-                document.getElementById('flash').style.opacity = '0';
-            }, 300);
-        }
-        function flipCard() { document.getElementById('card').classList.toggle('flipped'); }
-    </script>
-</body>
-</html>
+        .card { width: 10
